@@ -1,0 +1,19 @@
+{
+    "name": "luan220/sonarr",
+    "description": "PHP Sonarr API Wrapper",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Luan",
+            "email": "luan220@gmail.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^6.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "luan220\\Sonarr\\": "src/"
+        }
+    }
+}
