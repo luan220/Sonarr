@@ -61,6 +61,11 @@ class Sonarr
                 exit();
             }
         }
+	
+		$uriData['unmonitored'] = 'true';
+		$uriData['includeSeries'] = 'true';
+		$uriData['includeEpisodeFile'] = 'true';
+		$uriData['includeEpisodeImages'] = 'true';
 
         $response = [
             'uri' => 'calendar',
@@ -341,7 +346,7 @@ class Sonarr
      */
     public function getProfiles()
     {
-        $uri = 'profile';
+        $uri = 'QualityProfile';
 
         $response = [
             'uri' => $uri,
@@ -351,6 +356,24 @@ class Sonarr
 
         return $this->processRequest($response);
     }
+	
+	/**
+	 * Gets all quality profiles
+	 *
+	 * @return array|object|string
+	 */
+	public function getDiskInfos()
+	{
+		$uri = 'diskspace';
+		
+		$response = [
+			'uri' => $uri,
+			'type' => 'get',
+			'data' => []
+		];
+		
+		return $this->processRequest($response);
+	}
 
     /**
      * Get release by episode id
@@ -525,6 +548,8 @@ class Sonarr
 	public function getSerie($id)
 	{
 		$uri = 'series/'.$id;
+		
+		$uriData['includeSeasonImages'] = 'true';
 		
 		$response = [
 			'uri' => $uri,
@@ -713,15 +738,21 @@ class Sonarr
                 $this->httpAuthPassword
             ];
         }
+	
+		if ( $params['type'] == 'getv4' ) {
+			$url = $this->url . '/api/' . $params['uri'] . '?' . http_build_query($params['data']);
+		
+			return $client->get($url, $options);
+		}
 
         if ( $params['type'] == 'get' ) {
-            $url = $this->url . '/api/' . $params['uri'] . '?' . http_build_query($params['data']);
+            $url = $this->url . '/api/v3/' . $params['uri'] . '?' . http_build_query($params['data']);
 
             return $client->get($url, $options);
         }
 
         if ( $params['type'] == 'put' ) {
-            $url = $this->url . '/api/' . $params['uri'];
+            $url = $this->url . '/api/v3/' . $params['uri'];
             $options['json'] = $params['data'];
 
             return $client->put($url, $options);
@@ -736,7 +767,7 @@ class Sonarr
         }
 
         if ( $params['type'] == 'delete' ) {
-            $url = $this->url . '/api/' . $params['uri'] . '?' . http_build_query($params['data']);
+            $url = $this->url . '/api/v3/' . $params['uri'] . '?' . http_build_query($params['data']);
 
             return $client->delete($url, $options);
         }
